@@ -9,10 +9,12 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const Employee = require("./lib/Employee");
 
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+var team = [];
 function promptUser() {
 		return inquirer.prompt(
 			[{
@@ -54,7 +56,6 @@ function promptUser() {
 		let name = userInput.name;
 		let id = userInput.id;
 		let email= userInput.email;
-		console.log(userInput);
 		if (userInput.role === 'Manager') {
 			inquirer.prompt([{
 				type: "input",
@@ -62,7 +63,14 @@ function promptUser() {
 				message: "What is your officeNumber?"
 			}]).then(function(userInput) {
 				const man = new Manager(name, email, id, userInput.officeNumber);
-				console.log(man)
+				console.log(man);
+				team.push(man);
+				var data = render(team);
+				fs.writeFile(outputPath, data, "utf8", err => {
+					if(err){
+						throw err;
+					}
+				});
 			})
 
 		} else if (userInput.role === 'Engineer') {
@@ -73,6 +81,13 @@ function promptUser() {
 			}]).then(function(userInput) {
 				const eng = new Engineer(name, email, id, userInput.github);
 				console.log(eng)
+				team.push(eng);
+				var data = render(team);
+				fs.writeFile(outputPath, data, "utf8", err => {
+					if(err){
+						throw err;
+					}
+				});
 			})
 		} else {
 			inquirer.prompt([{
@@ -82,11 +97,17 @@ function promptUser() {
 			}]).then(function(userInput) {
 				const intern = new Intern(name, email, id, userInput.officeNumber);
 				console.log(intern)
+				team.push(intern);
+				var data = render(team);
+				fs.writeFile(outputPath, data, "utf8", err => {
+					if(err){
+						throw err;
+					}
+				});
 			})
 		}
-
 	});
-	
+
 
 
 // After the user has input all employees desired, call the `render` function (required
